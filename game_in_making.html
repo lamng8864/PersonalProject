@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake game in the making</title>
+</head>
+<style>
+  #game {
+    display:block;
+    background-color: beige;
+    /* border-radius: 16px; */
+    margin:100px auto;
+  }
+</style>
+<body>
+    <canvas id="game" width="1200" height="800"></canvas>
+</body>
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+//snake box
+  function reDrawGrid(){
+    ctx.clearRect(0,0,1200,800);
+    ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
+    ctx.fillRect(200,0,800,800);
+    //grid
+    for (let i = 0; i < canvas.width; i += 50){
+      for (let j = 0; j < canvas.height; j +=50){
+        ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
+        ctx.strokeRect(i,j,50,50);
+        ctx.fillText(`(${i},${j})`,i,j); //co-ordinate remove after
+      }
+    }
+  }
+  reDrawGrid();
+//snake head
+  let headxCoor= 400;
+  let headyCoor= 400;
+  function drawHead(xcoor,ycoor){
+    ctx.fillStyle = "rgb(194 143 120 )";
+    ctx.fillRect(xcoor+1,ycoor+1,48,48);
+  }
+  drawHead(headxCoor,headyCoor)
+//make snake head move
+//limit the boundary
+</script>
+</html>
