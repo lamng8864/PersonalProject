@@ -33,16 +33,82 @@
       }
     }
   }
-  reDrawGrid();
 //snake head
-  let headxCoor= 400;
+  let blockL = 50;
+  let headxCoor= 0;
   let headyCoor= 400;
   function drawHead(xcoor,ycoor){
     ctx.fillStyle = "rgb(194 143 120 )";
-    ctx.fillRect(xcoor+1,ycoor+1,48,48);
+    ctx.fillRect(xcoor+201,ycoor+1,48,48);
   }
-  drawHead(headxCoor,headyCoor)
-//make snake head move
-//limit the boundary
+  //make snake head move
+//first, need to make event listener for keys 
+let currentKeyHold;                            //hold key to know direction 
+let currentIntervalId;                        //hold current interval id so that i can be clear if the movement direction is changed. 
+function arrowKeysMovement(keyInput){
+  switch (keyInput.key){
+    case 'ArrowUp':
+      keyInput.preventDefault()
+      currentKeyHold = keyInput.key
+      clearInterval(currentIntervalId)         //clear prev interval
+      currentIntervalId = setInterval(moveUp,100)
+      break;
+    case 'ArrowDown':
+      keyInput.preventDefault()
+      currentKeyHold = keyInput.key
+      clearInterval(currentIntervalId)
+      currentIntervalId = setInterval(moveDown,100)
+      break;
+    case 'ArrowLeft':
+      keyInput.preventDefault()
+      currentKeyHold = keyInput.key
+      clearInterval(currentIntervalId)
+      currentIntervalId = setInterval(moveLeft,100);
+      break;
+    case 'ArrowRight':
+      keyInput.preventDefault()
+      currentKeyHold = keyInput.key                 //give or change value to hold key
+      clearInterval(currentIntervalId)
+      currentIntervalId = setInterval(moveRight,100);
+      break;
+      
+  }
+}
+
+// 2nd, make it move at constant speed
+
+function moveRight(){
+  if (headxCoor<750 && currentKeyHold === 'ArrowRight'){
+    headxCoor += blockL
+    reDrawGrid();
+    drawHead(headxCoor,headyCoor)
+  }
+}
+function moveLeft(){
+  if (headxCoor>0  && currentKeyHold === 'ArrowLeft'){
+    headxCoor -= blockL
+    reDrawGrid();
+    drawHead(headxCoor,headyCoor)
+  }
+}
+function moveDown(){
+  if (headyCoor<750 && currentKeyHold === 'ArrowDown'){
+    headyCoor += blockL
+    reDrawGrid();
+    drawHead(headxCoor,headyCoor)
+  }
+}
+function moveUp(){
+  if (headyCoor>0  && currentKeyHold === 'ArrowUp'){
+    headyCoor -= blockL
+    reDrawGrid();
+    drawHead(headxCoor,headyCoor)
+  }
+}
+
+//your drawing space 
+reDrawGrid();
+drawHead(headxCoor,headyCoor)
+document.addEventListener("keydown",arrowKeysMovement) // need ot take only 1 key input per seconds or so 
 </script>
 </html>
