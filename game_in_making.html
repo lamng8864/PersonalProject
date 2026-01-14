@@ -9,7 +9,7 @@
   #game {
     display:block;
     background-color: beige;
-    /* border-radius: 16px; */
+    border-radius: 16px;
     margin:100px auto;
   }
 </style>
@@ -29,7 +29,7 @@
       for (let j = 0; j < canvas.height; j +=50){
         ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
         ctx.strokeRect(i,j,50,50);
-        ctx.fillText(`(${i},${j})`,i,j); //co-ordinate remove after
+        ctx.fillText(`(${i},${j})`,i,j);        //co-ordinate remove after
       }
     }
   }
@@ -42,73 +42,78 @@
     ctx.fillRect(xcoor+201,ycoor+1,48,48);
   }
   //make snake head move
+
+//do i need to indent 
+
 //first, need to make event listener for keys 
 let currentKeyHold;                            //hold key to know direction 
-let currentIntervalId;                        //hold current interval id so that i can be clear if the movement direction is changed. 
-function arrowKeysMovement(keyInput){
-  switch (keyInput.key){
-    case 'ArrowUp':
-      keyInput.preventDefault()
-      currentKeyHold = keyInput.key
-      clearInterval(currentIntervalId)         //clear prev interval
-      currentIntervalId = setInterval(moveUp,100)
-      break;
-    case 'ArrowDown':
-      keyInput.preventDefault()
-      currentKeyHold = keyInput.key
-      clearInterval(currentIntervalId)
-      currentIntervalId = setInterval(moveDown,100)
-      break;
-    case 'ArrowLeft':
-      keyInput.preventDefault()
-      currentKeyHold = keyInput.key
-      clearInterval(currentIntervalId)
-      currentIntervalId = setInterval(moveLeft,100);
-      break;
-    case 'ArrowRight':
-      keyInput.preventDefault()
-      currentKeyHold = keyInput.key                 //give or change value to hold key
-      clearInterval(currentIntervalId)
-      currentIntervalId = setInterval(moveRight,100);
-      break;
-      
-  }
+let currentIntervalId;                         //hold current interval id so that i can be clear if the movement direction is changed. 
+let speed = 100;
+const kup = 'ArrowUp'
+const kdown = 'ArrowDown'
+const kleft = 'ArrowLeft'
+const kright = 'ArrowRight'
+
+function startMoving(direction,key){
+  clearInterval(currentIntervalId);                //clear prev interval
+  currentIntervalId = setInterval(direction,speed);
 }
 
-// 2nd, make it move at constant speed
+function arrowKeysMovement(keyInput){
+  keyInput.preventDefault()
+  if(currentKeyHold !== keyInput.key){
+    if (currentKeyHold !== kdown && keyInput.key === kup){                           //does replaceing keyInput.key with currentKeyHold work ? 
+      currentKeyHold = kup
+      startMoving(moveUp,kup)
+    } else if(currentKeyHold !== kup && keyInput.key === kdown){
+      currentKeyHold = kdown
+      startMoving(moveDown,kdown)
+    } else if(currentKeyHold !== kright && keyInput.key === kleft){
+      currentKeyHold = kleft
+      startMoving(moveLeft,kleft)
+    } else if(currentKeyHold !== kleft && keyInput.key === kright){
+      currentKeyHold = kright
+      startMoving(moveRight,kright)
+    }
+  }
+}
+                                                   //testing, remove later 
+setInterval(() => {
+  console.log(currentKeyHold)
+}, speed);
 
+// 2nd, make it move at constant speed
 function moveRight(){
-  if (headxCoor<750 && currentKeyHold === 'ArrowRight'){
+  if (headxCoor<750 && currentKeyHold === kright){
     headxCoor += blockL
     reDrawGrid();
     drawHead(headxCoor,headyCoor)
   }
 }
 function moveLeft(){
-  if (headxCoor>0  && currentKeyHold === 'ArrowLeft'){
+  if (headxCoor>0  && currentKeyHold === kleft){
     headxCoor -= blockL
     reDrawGrid();
     drawHead(headxCoor,headyCoor)
   }
 }
 function moveDown(){
-  if (headyCoor<750 && currentKeyHold === 'ArrowDown'){
+  if (headyCoor<750 && currentKeyHold === kdown){
     headyCoor += blockL
     reDrawGrid();
     drawHead(headxCoor,headyCoor)
   }
 }
 function moveUp(){
-  if (headyCoor>0  && currentKeyHold === 'ArrowUp'){
+  if (headyCoor>0  && currentKeyHold === kup){
     headyCoor -= blockL
     reDrawGrid();
     drawHead(headxCoor,headyCoor)
   }
 }
-
 //your drawing space 
 reDrawGrid();
 drawHead(headxCoor,headyCoor)
-document.addEventListener("keydown",arrowKeysMovement) // need ot take only 1 key input per seconds or so 
+document.addEventListener("keydown",arrowKeysMovement,) // need ot take only 1 key input per seconds or so )
 </script>
 </html>
