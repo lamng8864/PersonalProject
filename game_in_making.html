@@ -25,27 +25,73 @@
     ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
     ctx.fillRect(200,0,800,800);
     //grid
-    for (let i = 0; i < canvas.width; i += 50){
-      for (let j = 0; j < canvas.height; j +=50){
+    for (let i = 0; i < canvas.width; i += blockL){
+      for (let j = 0; j < canvas.height; j +=blockL){
         ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
-        ctx.strokeRect(i,j,50,50);
+        ctx.strokeRect(i,j,blockL,blockL);
         ctx.fillText(`(${i},${j})`,i,j);        //co-ordinate remove after
       }
     }
   }
 //snake head
   let blockL = 50;
-  let headxCoor= 0;
+  let headxCoor= 200;
   let headyCoor= 400;
-  function drawHead(xcoor,ycoor){
+  function drawEyes(){
+    let heads = blockL - 2
+    let ix = headxCoor+201
+    let iy = headyCoor+1
+    if (currentKeyHold === undefined){  
+      ctx.fillStyle = "rgb(255 255 255 )";
+      ctx.fillRect(ix + 28,iy +28,12,12)
+      ctx.fillRect(ix + 28,iy+8,12,12)
+      ctx.fillStyle = "rgb(0 0 0 )";
+      ctx.fillRect(ix+32,iy+30,8,8)
+      ctx.fillRect(ix+32,iy+10,8,8)
+    }
+    if (currentKeyHold === kup){
+      ctx.fillStyle = "rgb(255 255 255 )";
+      ctx.fillRect(ix + 8,iy +8,12,12)
+      ctx.fillRect(ix + 28,iy+8,12,12)
+      ctx.fillStyle = "rgb(0 0 0 )";
+      ctx.fillRect(ix+10,iy+8,8,8)
+      ctx.fillRect(ix+30,iy+8,8,8)
+    }
+    if (currentKeyHold === kdown){
+      ctx.fillStyle = "rgb(255 255 255 )";
+      ctx.fillRect(ix + 8,iy +28,12,12)
+      ctx.fillRect(ix + 28,iy +28,12,12)
+      ctx.fillStyle = "rgb(0 0 0 )";
+      ctx.fillRect(ix+10,iy+32,8,8)
+        ctx.fillRect(ix+30,iy+32,8,8)
+    }
+    if (currentKeyHold === kleft){
+      ctx.fillStyle = "rgb(255 255 255 )";
+      ctx.fillRect(ix + 8,iy +8,12,12)
+      ctx.fillRect(ix + 8,iy +28,12,12)
+      ctx.fillStyle = "rgb(0 0 0 )";
+      ctx.fillRect(ix+8,iy+30,8,8)
+      ctx.fillRect(ix+8,iy+10,8,8)
+    }
+    if (currentKeyHold === kright){
+      ctx.fillStyle = "rgb(255 255 255 )";
+      ctx.fillRect(ix + 28,iy +28,12,12)
+      ctx.fillRect(ix + 28,iy+8,12,12)
+      ctx.fillStyle = "rgb(0 0 0 )";
+      ctx.fillRect(ix+32,iy+30,8,8)
+      ctx.fillRect(ix+32,iy+10,8,8)
+    }
+  }
+  function drawHead(){
     ctx.fillStyle = "rgb(194 143 120 )";
-    ctx.fillRect(xcoor+201,ycoor+1,48,48);
+    ctx.fillRect(headxCoor+201,headyCoor+1,blockL-2,blockL-2);
+    drawEyes()
   }
   //make snake head move
 
 //do i need to indent 
 
-//first, need to make event listener for keys 
+//first, need to make event listener for keys     
 let currentKeyHold;                            //hold key to know direction 
 let currentIntervalId;                         //hold current interval id so that i can be clear if the movement direction is changed. 
 let speed = 100;
@@ -62,7 +108,7 @@ function startMoving(direction,key){
 function arrowKeysMovement(keyInput){
   keyInput.preventDefault()
   if(currentKeyHold !== keyInput.key){
-    if (currentKeyHold !== kdown && keyInput.key === kup){                           //does replaceing keyInput.key with currentKeyHold work ? 
+    if (currentKeyHold !== kdown && keyInput.key === kup){                           
       currentKeyHold = kup
       startMoving(moveUp,kup)
     } else if(currentKeyHold !== kup && keyInput.key === kdown){
@@ -81,7 +127,7 @@ function arrowKeysMovement(keyInput){
 setInterval(() => {
   console.log(currentKeyHold)
 }, speed);
-
+                                                    //
 // 2nd, make it move at constant speed
 function moveRight(){
   if (headxCoor<750 && currentKeyHold === kright){
