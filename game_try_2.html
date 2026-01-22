@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake game in the making</title>
+</head>
+<style>
+  #game {
+    display:block;
+    background-color: beige;
+    border-radius: 16px;
+    margin:100px auto;
+  }
+</style>
+<body>
+    <canvas id="game" width="1200" height="800"></canvas>
+</body>
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  
+// color of main table
+  ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
+  ctx.fillRect(200,0,800,800);
+// make grid system and make everything based on it 
+  let blockL = 50;
+  for (let i = 200; i < canvas.width-200; i += blockL){
+    for (let j = 0; j < canvas.height; j += blockL){
+      // ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
+      ctx.strokeRect(i,j,blockL,blockL);
+      // ctx.fillText(`(${i},${j})`,i,j);
+    }
+  }
+// x coor convert
+  function xCoorConversion(inputXCoor){
+    if(inputXCoor >= 16){
+      outputXCoor = 15 * blockL + 200
+    } else if (inputXCoor <= 0){
+      outputXCoor =  200
+    } else{
+      outputXCoor = inputXCoor * blockL + 200
+    }
+    return outputXCoor
+  }
+// y coor convert
+  function yCoorConversion(inputYCoor){
+    if(inputYCoor >= 16){
+      outputYCoor = 15 * blockL 
+    } else if (inputYCoor <= 0){
+      outputYCoor =  0
+    } else{
+      outputYCoor = inputYCoor * blockL
+    }
+    outputYCoor = inputYCoor * blockL
+    return outputYCoor
+  }
+// draw head
+  let X = 4
+  let Y = 8
+  function drawBlock(){
+    let headxCoor = xCoorConversion(X)
+    let headyCoor = yCoorConversion(Y)
+    console.log(headxCoor,headyCoor)
+    ctx.fillStyle = "rgb(194 143 120 )"
+    ctx.fillRect(headxCoor,headyCoor,blockL,blockL);
+    // drawEyes()
+  }
+  function clearBlock(){
+    ctx.clearRect()
+  }
+
+  drawBlock()
+// next, put it in motion and make counter 
+// counter first 
+let counterKeeper = 0;
+setInterval(() => {
+  counterKeeper ++
+  console.log(counterKeeper)
+}, 100);
+// and then just move straight 
+/*
+moveRightId = setInterval(() => {
+  X+=1
+  drawHead()
+}, 100);
+moveLeftId = setInterval(() => {
+  X-=1
+  drawHead()
+}, 100);
+moveUpId = setInterval(() => {
+  Y +=1
+  drawHead()
+}, 100);
+moveDownId = setInterval(() => {
+  Y-=1
+  drawHead()
+}, 100);
+*/
+
+// change of concept, instead of having a defined head or body or tail,
+// lets just call all of them parts and when it moves, draw new block in that direction, delete the last one 
+document.addEventListener('keydown',(event)=>{
+  if (event.key === 'ArrowDown'){
+    ctx.fillStyle = 'rgb(0 0 0 /50%)'
+    ctx.fillRect(xCoorConversion(X),yCoorConversion(Y),blockL,blockL)
+    event.preventDefault()
+    console.log(event.key)
+    Y += 1
+    drawBlock()
+  } else if (event.key === 'ArrowRight'){
+    ctx.fillStyle = 'rgb(0 0 0 /50%)'
+    ctx.fillRect(xCoorConversion(X),yCoorConversion(Y),blockL,blockL)
+    event.preventDefault()
+    console.log(event.key)
+    X += 1
+    drawBlock()
+  } else if (event.key === 'ArrowUp'){
+    ctx.fillStyle = 'rgb(0 0 0 /50%)'
+    ctx.fillRect(xCoorConversion(X),yCoorConversion(Y),blockL,blockL)
+    event.preventDefault()
+    console.log(event.key)
+    Y -= 1
+    drawBlock()
+  } else if (event.key === 'ArrowLeft'){
+    ctx.fillStyle = 'rgb(0 0 0 /50%)'
+    ctx.fillRect(xCoorConversion(X),yCoorConversion(Y),blockL,blockL)
+    event.preventDefault()
+    console.log(event.key)
+    X -= 1
+    drawBlock()
+  }
+})
+
+</script>
+</html>

@@ -1,0 +1,144 @@
+<DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake game in the making</title>
+</head>
+<style>
+  #game {
+    display:block;
+    background-color: beige;
+    border-radius: 16px;
+    margin:100px auto;
+  }
+</style>
+<body>
+    <canvas id="game" width="1200" height="800"></canvas>
+</body>
+<script>
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  let blockL = 50;
+// color of main table
+  function reDrawGrid(){
+    ctx.clearRect(200,0,800,800);
+    ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
+    ctx.fillRect(200,0,800,800);
+// make grid system and make everything based on it 
+    for (let i = 200; i < canvas.width-200; i += blockL){
+        for (let j = 0; j < canvas.height; j += blockL){
+        // ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
+        ctx.strokeRect(i,j,blockL,blockL);
+        // ctx.fillText(`(${i},${j})`,i,j);
+        }
+    }
+  }
+
+// x coor convert
+  function xCoorConversion(inputXCoor){
+    if(inputXCoor >= 16){
+      outputXCoor = 15 * blockL + 200
+    } else if (inputXCoor <= 0){
+      outputXCoor =  200
+    } else{
+      outputXCoor = inputXCoor * blockL + 200
+    }
+    return outputXCoor
+  }
+// y coor convert
+  function yCoorConversion(inputYCoor){
+    if(inputYCoor >= 16){
+      outputYCoor = 15 * blockL 
+    } else if (inputYCoor <= 0){
+      outputYCoor =  0
+    } else{
+      outputYCoor = inputYCoor * blockL
+    }
+    outputYCoor = inputYCoor * blockL
+    return outputYCoor
+  }
+  
+// what about making a whole snake using an obj then 
+  let snakeCoor = [[4,8],[5,8]]                         //snake list with coor of blocks
+  let xCoor
+  let yCoor
+  function drawSnake(){
+    for (let i = 0; i<snakeCoor.length; i++){
+      xCoor = snakeCoor[i][0]                           //transfer value to draw
+      yCoor = snakeCoor[i][1]
+      // console.log(xCoor,yCoor)
+      // console.log(xCoorConversion(xCoor),yCoorConversion(yCoor))
+      ctx.fillStyle = "rgb(194 143 120 )"
+      ctx.fillRect(xCoorConversion(xCoor),yCoorConversion(yCoor),blockL,blockL)
+    }
+  }
+  console.log(snakeCoor[0])
+  console.log(snakeCoor[1])
+// moving
+  let intervalId;
+  let currentKeyHold;
+  document.addEventListener('keydown',(event)=>{
+    if (event.key === 'ArrowDown' && currentKeyHold !== 'ArrowUp'){
+      event.preventDefault()                            //prevent scrolling
+      currentKeyHold = event.key                        //stop printing multiple interval 
+      clearInterval(intervalId)
+      intervalId = setInterval(()=>{
+        snakeCoor.shift()                               //remove first pair
+        yCoor +=1
+        snakeCoor.push([xCoor,yCoor])                   //add last pair
+        // console.log(snakeCoor[0])
+        // console.log(snakeCoor[1])
+        reDrawGrid()                                    //clear everything
+        drawSnake()                                     //draw the frame
+      },100)
+    } else if (event.key === 'ArrowUp' && currentKeyHold !== 'ArrowDown'){               
+      event.preventDefault()
+      currentKeyHold = event.key                        //repeat
+      clearInterval(intervalId)
+      intervalId = setInterval(()=>{
+        snakeCoor.shift()
+        yCoor -=1
+        snakeCoor.push([xCoor,yCoor])
+        // console.log(snakeCoor[0])
+        // console.log(snakeCoor[1])
+        reDrawGrid()
+        drawSnake()
+      },100)
+    } else if (event.key === 'ArrowRight' && currentKeyHold !== 'ArrowLeft'){             
+      event.preventDefault()
+      currentKeyHold = event.key
+      clearInterval(intervalId)
+      intervalId = setInterval(()=>{
+        snakeCoor.shift()
+        xCoor +=1
+        snakeCoor.push([xCoor,yCoor])
+        // console.log(snakeCoor[0])
+        // console.log(snakeCoor[1])
+        reDrawGrid()
+        drawSnake()
+      },100)
+    } else if (event.key === 'ArrowLeft' && currentKeyHold !== 'ArrowRight'){
+      event.preventDefault()
+      currentKeyHold = event.key
+      clearInterval(intervalId)
+      intervalId = setInterval(()=>{
+        snakeCoor.shift()
+        xCoor -=1
+        snakeCoor.push([xCoor,yCoor])
+        // console.log(snakeCoor[0])
+        // console.log(snakeCoor[1])
+        reDrawGrid()
+        drawSnake()
+      },100)
+    }
+  })
+// making it end or stop
+
+
+
+//draw here 
+  reDrawGrid()
+  drawSnake()
+</script>
+</html>

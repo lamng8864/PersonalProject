@@ -83,7 +83,7 @@
     }
   }
   function drawHead(){
-    ctx.fillStyle = "rgb(194 143 120 )";
+    ctx.fillStyle = "rgb(194 143 120 )"
     ctx.fillRect(headxCoor+201,headyCoor+1,blockL-2,blockL-2);
     drawEyes()
   }
@@ -93,73 +93,143 @@
 
 //first, need to make event listener for keys     
 let currentKeyHold;                            //hold key to know direction 
-let currentIntervalId;                         //hold current interval id so that i can be clear if the movement direction is changed. 
-let speed = 100;
+let headIntervalId;                         //hold current interval id so that i can be clear if the movement direction is changed. 
+let bodyIntervalId;
+let playerSpeed = 1                            //change speed here (0.5 is half, 1 is original, 2 is double)
+let speed = 100/playerSpeed;
 const kup = 'ArrowUp'
 const kdown = 'ArrowDown'
 const kleft = 'ArrowLeft'
 const kright = 'ArrowRight'
 
-function startMoving(direction,key){
-  clearInterval(currentIntervalId);                //clear prev interval
-  currentIntervalId = setInterval(direction,speed);
+function headStartMoving(direction){
+  clearInterval(headIntervalId);                //clear prev interval
+  headIntervalId = setInterval(direction,speed);
+  counterKeeper = 0;
+}
+function bodyStartMoving(direction){
+  clearInterval(bodyIntervalId);                
+  bodyIntervalId = setInterval(direction,speed);
 }
 
 function arrowKeysMovement(keyInput){
-  keyInput.preventDefault()
-  if(currentKeyHold !== keyInput.key){
-    if (currentKeyHold !== kdown && keyInput.key === kup){                           
-      currentKeyHold = kup
-      startMoving(moveUp,kup)
-    } else if(currentKeyHold !== kup && keyInput.key === kdown){
-      currentKeyHold = kdown
-      startMoving(moveDown,kdown)
-    } else if(currentKeyHold !== kright && keyInput.key === kleft){
-      currentKeyHold = kleft
-      startMoving(moveLeft,kleft)
-    } else if(currentKeyHold !== kleft && keyInput.key === kright){
-      currentKeyHold = kright
-      startMoving(moveRight,kright)
+  if(keyInput.key === kup || keyInput.key === kdown ||keyInput.key === kright || keyInput.key === kleft){
+    keyInput.preventDefault()
+    if(currentKeyHold !== keyInput.key){
+      if (currentKeyHold !== kdown && keyInput.key === kup){                           
+        currentKeyHold = kup
+        headStartMoving(headMoveUp)
+        bodyStartMoving(bodyMoveUp)
+      } else if(currentKeyHold !== kup && keyInput.key === kdown){
+        currentKeyHold = kdown
+        headStartMoving(headMoveDown)
+        // setTimeout(bodyStartMoving(bodyMoveDown(drawBody)),100)
+      } else if(currentKeyHold !== kright && currentKeyHold!==undefined && keyInput.key === kleft){
+        currentKeyHold = kleft
+        headStartMoving(headMoveLeft)
+        // setTimeout(bodyStartMoving(bodyMoveLeft(drawBody)),100)
+
+      } else if(currentKeyHold !== kleft && keyInput.key === kright){
+        currentKeyHold = kright
+        headStartMoving(headMoveRight)
+        // setTimeout(bodyStartMoving(bodyMoveRight(drawBody)),100)
+
+      }
     }
   }
 }
                                                    //testing, remove later 
 setInterval(() => {
   console.log(currentKeyHold)
+  console.log(bodyxCoor,bodyyCoor)
+  console.log(headxCoor+201,headyCoor+1)
 }, speed);
                                                     //
 // 2nd, make it move at constant speed
-function moveRight(){
+function headMoveRight(){
   if (headxCoor<750 && currentKeyHold === kright){
     headxCoor += blockL
     reDrawGrid();
-    drawHead(headxCoor,headyCoor)
+    drawHead();
   }
 }
-function moveLeft(){
+function headMoveLeft(){
   if (headxCoor>0  && currentKeyHold === kleft){
     headxCoor -= blockL
     reDrawGrid();
-    drawHead(headxCoor,headyCoor)
+    drawHead();
   }
 }
-function moveDown(){
+function headMoveDown(){
   if (headyCoor<750 && currentKeyHold === kdown){
     headyCoor += blockL
     reDrawGrid();
-    drawHead(headxCoor,headyCoor)
+    drawHead();
   }
 }
-function moveUp(){
+function headMoveUp(){
   if (headyCoor>0  && currentKeyHold === kup){
     headyCoor -= blockL
     reDrawGrid();
-    drawHead(headxCoor,headyCoor)
+    drawHead();
   }
 }
+//this is to draw body part 1 
+let bodyyCoor = headyCoor +1
+let bodyxCoor = headxCoor +201
+
+function bodyMoveUp(){
+  if (currentKeyHold === kup && counterKeeper === 1){
+    bodyyCoor = headyCoor + 1 - blockL
+    drawBody(); 
+  }
+}
+function bodyMoveDown(){
+  if (headyCoor<750 && currentKeyHold === kdown){
+    headyCoor += blockL
+    reDrawGrid();
+    drawBody();
+  }
+}
+function bodyMoveLeft(){
+  if (headxCoor>0  && currentKeyHold === kleft){
+    headxCoor -= blockL
+    reDrawGrid();
+    drawBody();
+  }
+}
+function bodyMoveRight(){
+  if (headxCoor<750 && currentKeyHold === kright){
+    headxCoor += blockL
+    reDrawGrid();
+    drawBody();
+  }
+}
+
+// redraw grid, can't just separate them
+
+//next step here
+
+
+//draw body then number 1-...
+
+function drawBody(){
+  ctx.fillStyle = "rgb(194 143 120 )";
+  ctx.fillRect(bodyyCoor,bodyxCoor,blockL-2,blockL-2);
+}
+//make a counter 
+let counterKeeper = 0;
+setInterval(() => {
+  counterKeeper ++
+  console.log(counterKeeper)
+}, speed);
+
+
 //your drawing space 
 reDrawGrid();
-drawHead(headxCoor,headyCoor)
+drawHead();
+// drawBody(1)
 document.addEventListener("keydown",arrowKeysMovement,) // need ot take only 1 key input per seconds or so )
+
 </script>
 </html>
