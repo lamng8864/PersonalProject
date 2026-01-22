@@ -37,37 +37,25 @@
 
 // x coor convert
   function xCoorConversion(inputXCoor){
-    if(inputXCoor >= 16){
-      outputXCoor = 15 * blockL + 200
-    } else if (inputXCoor <= 0){
-      outputXCoor =  200
-    } else{
-      outputXCoor = inputXCoor * blockL + 200
-    }
+    outputXCoor = inputXCoor * blockL + 200
     return outputXCoor
   }
 // y coor convert
   function yCoorConversion(inputYCoor){
-    if(inputYCoor >= 16){
-      outputYCoor = 15 * blockL 
-    } else if (inputYCoor <= 0){
-      outputYCoor =  0
-    } else{
-      outputYCoor = inputYCoor * blockL
-    }
+    
     outputYCoor = inputYCoor * blockL
     return outputYCoor
   }
   
 // what about making a whole snake using an obj then 
-  let snakeCoor = [[4,8],[5,8]]                         //snake list with coor of blocks
+  let snakeCoor = [[2,7],[2,8],[3,8],[4,8],[5,8]]                         //snake list with coor of blocks
   let xCoor
   let yCoor
   function drawSnake(){
     for (let i = 0; i<snakeCoor.length; i++){
       xCoor = snakeCoor[i][0]                           //transfer value to draw
       yCoor = snakeCoor[i][1]
-      // console.log(xCoor,yCoor)
+      console.log(xCoor,yCoor)
       // console.log(xCoorConversion(xCoor),yCoorConversion(yCoor))
       ctx.fillStyle = "rgb(194 143 120 )"
       ctx.fillRect(xCoorConversion(xCoor),yCoorConversion(yCoor),blockL,blockL)
@@ -78,65 +66,62 @@
 // moving
   let intervalId;
   let currentKeyHold;
-  document.addEventListener('keydown',(event)=>{
-    if (event.key === 'ArrowDown' && currentKeyHold !== 'ArrowUp'){
-      event.preventDefault()                            //prevent scrolling
-      currentKeyHold = event.key                        //stop printing multiple interval 
-      clearInterval(intervalId)
-      intervalId = setInterval(()=>{
-        snakeCoor.shift()                               //remove first pair
+//shortening by moving function
+  function moving(direction){
+    clearInterval(intervalId)
+    intervalId = setInterval(()=>{
+      snakeCoor.shift()                               
+      if(direction === kdown ){
         yCoor +=1
-        snakeCoor.push([xCoor,yCoor])                   //add last pair
-        // console.log(snakeCoor[0])
-        // console.log(snakeCoor[1])
-        reDrawGrid()                                    //clear everything
-        drawSnake()                                     //draw the frame
-      },100)
-    } else if (event.key === 'ArrowUp' && currentKeyHold !== 'ArrowDown'){               
-      event.preventDefault()
-      currentKeyHold = event.key                        //repeat
-      clearInterval(intervalId)
-      intervalId = setInterval(()=>{
-        snakeCoor.shift()
+      } else if (direction === kup ){
         yCoor -=1
-        snakeCoor.push([xCoor,yCoor])
-        // console.log(snakeCoor[0])
-        // console.log(snakeCoor[1])
-        reDrawGrid()
-        drawSnake()
-      },100)
-    } else if (event.key === 'ArrowRight' && currentKeyHold !== 'ArrowLeft'){             
-      event.preventDefault()
-      currentKeyHold = event.key
-      clearInterval(intervalId)
-      intervalId = setInterval(()=>{
-        snakeCoor.shift()
+      } else if (direction === kright ){
         xCoor +=1
-        snakeCoor.push([xCoor,yCoor])
-        // console.log(snakeCoor[0])
-        // console.log(snakeCoor[1])
-        reDrawGrid()
-        drawSnake()
-      },100)
-    } else if (event.key === 'ArrowLeft' && currentKeyHold !== 'ArrowRight'){
-      event.preventDefault()
-      currentKeyHold = event.key
-      clearInterval(intervalId)
-      intervalId = setInterval(()=>{
-        snakeCoor.shift()
+      } else if (direction === kleft ){
         xCoor -=1
-        snakeCoor.push([xCoor,yCoor])
-        // console.log(snakeCoor[0])
-        // console.log(snakeCoor[1])
-        reDrawGrid()
-        drawSnake()
-      },100)
+      }
+      snakeCoor.push([xCoor,yCoor])
+      reDrawGrid()                                    
+      drawSnake()  
+      // make game end or stop
+      let headPairNum = snakeCoor.length-1
+      if ((currentKeyHold === kdown && snakeCoor[headPairNum][1]>14)||(currentKeyHold === kup && snakeCoor[headPairNum][1]<1)||
+    (currentKeyHold === kright && snakeCoor[headPairNum][0]>14)||(currentKeyHold === kleft && snakeCoor[headPairNum][0]<1)){
+        console.log(snakeCoor[1])
+        document.removeEventListener('keydown',drawInProgress)
+        clearInterval(intervalId)
+        //make game-over screen
+      }                                   
+    },100)
+  }
+// var for arrows to make my life easier 
+  const kdown = 'ArrowDown'
+  const kup = 'ArrowUp'
+  const kright = 'ArrowRight'
+  const kleft = 'ArrowLeft'
+//event listener, main moving mechanics
+  document.addEventListener('keydown',drawInProgress)
+  function drawInProgress(event){
+    if(event.key === kdown || event.key === kup || event.key === kright || event.key === kleft){
+      event.preventDefault()  
+      if (event.key === kdown && currentKeyHold !== kup && currentKeyHold !== kdown){
+        currentKeyHold = event.key                        //stop printing multiple interval 
+        moving(currentKeyHold)
+      } else if (event.key === kup && currentKeyHold !== kdown && currentKeyHold !== kup){               
+        currentKeyHold = event.key                        //repeat
+        moving(currentKeyHold)
+      } else if (event.key === kright && currentKeyHold !== kleft && currentKeyHold !== kright){             
+        currentKeyHold = event.key                        // ^ prevent continious new loop each time key press and going opposite way 
+        moving(currentKeyHold)
+      } else if (event.key === kleft && currentKeyHold !== kright && currentKeyHold !== kleft){
+        currentKeyHold = event.key
+        moving(currentKeyHold)
+      }
     }
-  })
-// making it end or stop
-
-
-
+  }
+//next is scoring
+//die when eat self
+                          
 //draw here 
   reDrawGrid()
   drawSnake()
