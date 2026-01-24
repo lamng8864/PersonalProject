@@ -48,7 +48,7 @@
   }
   
 // what about making a whole snake using an obj then 
-  let snakeCoor = [[2,7],[2,8],[3,8],[4,8],[5,8]]                         //snake list with coor of blocks
+  let snakeCoor = [[3,8],[4,8],[5,8]]                         //snake list with coor of blocks
   let xCoor
   let yCoor
   function drawSnake(){
@@ -66,58 +66,80 @@
 
 // food obj
 //next is scoring
-let foodLocationX = 8
+let foodLocationX = 10
 let foodLocationY = 8
 function drawFood(){
   ctx.fillStyle = "rgb( 0 255 0 )"
   ctx.fillRect(xCoorConversion(foodLocationX),yCoorConversion(foodLocationY),blockL,blockL)
 }
-
-
+// and game over function to keep everything short, there is 2 condition anyway 
+function gameOver(){
+  document.removeEventListener('keydown',drawInProgress)
+  clearInterval(intervalId)
+//make game-over screen        
+  ctx.fillStyle='rgb(0 0 0/50%)'
+  ctx.fillRect(0,0,1200,800)
+}
                                                                                                           //
 // moving
   let intervalId;
   let currentKeyHold;
+
+  let counterKeeper = 0 //keep counter
 //shortening by moving function
   function moving(direction){
     clearInterval(intervalId)
     intervalId = setInterval(()=>{
-      let cutpiece = snakeCoor.shift()                               
-      if(direction === kdown ){
-        yCoor +=1
-      } else if (direction === kup ){
-        yCoor -=1
-      } else if (direction === kright ){
-        xCoor +=1
-      } else if (direction === kleft ){
-        xCoor -=1
-      }
-      snakeCoor.push([xCoor,yCoor])
-      reDrawGrid()                                    
-      drawSnake()  
+      counterKeeper++
+      // console.log(counterKeeper)
+      if(counterKeeper === 12){                               // affect speed between 10 -> 15
+        let cutpiece = snakeCoor.shift()                               
+        if(direction === kdown ){
+          yCoor +=1
+        } else if (direction === kup ){
+          yCoor -=1
+        } else if (direction === kright ){
+          xCoor +=1
+        } else if (direction === kleft ){
+          xCoor -=1
+        }
+        snakeCoor.push([xCoor,yCoor])
+        reDrawGrid()                                    
+        drawSnake()  
 // make game end or stop
-      let headPairNum = snakeCoor.length-1
-      if ((currentKeyHold === kdown && snakeCoor[headPairNum][1]>15)||(currentKeyHold === kup && snakeCoor[headPairNum][1]<0)||
-    (currentKeyHold === kright && snakeCoor[headPairNum][0]>15)||(currentKeyHold === kleft && snakeCoor[headPairNum][0]<0)){
-        console.log(snakeCoor[1])
-        document.removeEventListener('keydown',drawInProgress)
-        clearInterval(intervalId)
-        //make game-over screen        
-        ctx.fillStyle='rgb(0 0 0/50%)'
-        ctx.fillRect(0,0,1200,800)
-      }
+        let headPairNum = snakeCoor.length-1
+        if ((currentKeyHold === kdown && snakeCoor[headPairNum][1]>15)||(currentKeyHold === kup && snakeCoor[headPairNum][1]<0)||
+        (currentKeyHold === kright && snakeCoor[headPairNum][0]>15)||(currentKeyHold === kleft && snakeCoor[headPairNum][0]<0)){
+          // console.log(snakeCoor[1])
+          gameOver()
+        }
 // scoring up here because need to  
-drawFood()
-let headSnakeX = snakeCoor[headPairNum][0]
-let headSnakeY = snakeCoor[headPairNum][1]
-if (headSnakeX===foodLocationX && headSnakeY===foodLocationY){
-  snakeCoor.unshift(cutpiece)
-  ctx.clearRect(xCoorConversion(foodLocationX),yCoorConversion(foodLocationY),blockL,blockL)
-  foodLocationX = Math.floor(Math.random()*16)
-  foodLocationY = Math.floor(Math.random()*16)
-}        
+        drawFood()
+        let headSnakeX = snakeCoor[headPairNum][0]
+        let headSnakeY = snakeCoor[headPairNum][1]
+        if (headSnakeX===foodLocationX && headSnakeY===foodLocationY){
+          snakeCoor.unshift(cutpiece)
+          ctx.clearRect(xCoorConversion(foodLocationX),yCoorConversion(foodLocationY),blockL,blockL)
+          foodLocationX = Math.floor(Math.random()*16)
+          foodLocationY = Math.floor(Math.random()*16)
+          //add if so that food can't spawn on snake
+        }
 
-    },100)
+// prevent self eating.                   ----- done
+        let ifSelfEat = []
+        for (let i = 0; i < snakeCoor.length; i += 1){
+          if (snakeCoor[i][0] === snakeCoor[headPairNum][0] && snakeCoor[i][1] === snakeCoor[headPairNum][1] ){
+            ifSelfEat.push(snakeCoor[i])
+          }
+        }
+        if (ifSelfEat.length >= 2){
+          gameOver()
+        }
+
+// counter
+        counterKeeper = 0         
+      }
+    },10)
   }
 // var for arrows to make my life easier 
   const kdown = 'ArrowDown'
@@ -146,11 +168,15 @@ if (headSnakeX===foodLocationX && headSnakeY===foodLocationY){
   }
 
 
-//remember to shorten the print food code 
+//remember to shorten the print food code ------ done
 
-//die when eat self
-//bug, bumping wall, delay, eat itself
-                          
+//die when eat self ----- done
+
+//bug, bumping wall, delay, eat itself ----- somewhat completed ? 
+// make it so that it only take 1 key input per seconds or sth like that
+// but then u'll need buffer key  
+
+
 //draw here 
   reDrawGrid()
   drawSnake()
