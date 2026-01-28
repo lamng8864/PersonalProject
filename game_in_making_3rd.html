@@ -61,15 +61,15 @@
       ctx.fillRect(xCoorConversion(xCoor),yCoorConversion(yCoor),blockL,blockL)
     }
   }
-  console.log(snakeCoor[0])
-  console.log(snakeCoor[1])
+  // console.log(snakeCoor[0])
+  // console.log(snakeCoor[1])
 
 // food obj
 //next is scoring
 let foodLocationX = 10
 let foodLocationY = 8
 function drawFood(){
-  ctx.fillStyle = "rgb( 0 255 0 )"
+  ctx.fillStyle = "rgb(113 188 32)"
   ctx.fillRect(xCoorConversion(foodLocationX),yCoorConversion(foodLocationY),blockL,blockL)
 }
 // and game over function to keep everything short, there is 2 condition anyway 
@@ -84,6 +84,8 @@ function gameOver(){
 // moving
   let intervalId;
   let currentKeyHold;
+  // let nextKeyHold
+  let speed = 12                                // affect speed between 10 -> 15
 
   let counterKeeper = 0 //keep counter
 //shortening by moving function
@@ -91,28 +93,32 @@ function gameOver(){
     clearInterval(intervalId)
     intervalId = setInterval(()=>{
       counterKeeper++
-      // console.log(counterKeeper)
-      if(counterKeeper === 12){                               // affect speed between 10 -> 15
+      // console.log(currentKeyHold)
+
+//movement mechanics 
+      if(counterKeeper === speed ){                               
         let cutpiece = snakeCoor.shift()                               
-        if(direction === kdown ){
+        if(direction === kdown || direction === ks){
           yCoor +=1
-        } else if (direction === kup ){
+        } else if (direction === kup || direction === kw){
           yCoor -=1
-        } else if (direction === kright ){
+        } else if (direction === kright || direction === kd){
           xCoor +=1
-        } else if (direction === kleft ){
+        } else if (direction === kleft || direction === ka){
           xCoor -=1
         }
         snakeCoor.push([xCoor,yCoor])
         reDrawGrid()                                    
         drawSnake()  
+
 // make game end or stop
         let headPairNum = snakeCoor.length-1
-        if ((currentKeyHold === kdown && snakeCoor[headPairNum][1]>15)||(currentKeyHold === kup && snakeCoor[headPairNum][1]<0)||
-        (currentKeyHold === kright && snakeCoor[headPairNum][0]>15)||(currentKeyHold === kleft && snakeCoor[headPairNum][0]<0)){
+        if (((currentKeyHold === kdown || currentKeyHold === ks )&& snakeCoor[headPairNum][1]>15)||((currentKeyHold === kup ||currentKeyHold === kw) && snakeCoor[headPairNum][1]<0)||
+        ((currentKeyHold === kright || currentKeyHold === kd )&& snakeCoor[headPairNum][0]>15)||((currentKeyHold === kleft || currentKeyHold === ka) && snakeCoor[headPairNum][0]<0)){
           // console.log(snakeCoor[1])
           gameOver()
         }
+
 // scoring up here because need to  
         drawFood()
         let headSnakeX = snakeCoor[headPairNum][0]
@@ -123,6 +129,11 @@ function gameOver(){
           foodLocationX = Math.floor(Math.random()*16)
           foodLocationY = Math.floor(Math.random()*16)
           //add if so that food can't spawn on snake
+          for (let i = 0; i< snakeCoor.length; i++){
+            if (foodLocationX === snakeCoor[i][0] && foodLocationY === snakeCoor[i][1])
+            foodLocationX = Math.floor(Math.random()*16)
+            foodLocationY = Math.floor(Math.random()*16)
+          }
         }
 
 // prevent self eating.                   ----- done
@@ -137,35 +148,60 @@ function gameOver(){
         }
 
 // counter
-        counterKeeper = 0         
+        counterKeeper = 0     
+        console.log(snakeCoor.length - 3)       
       }
     },10)
   }
 // var for arrows to make my life easier 
-  const kdown = 'ArrowDown'
-  const kup = 'ArrowUp'
-  const kright = 'ArrowRight'
-  const kleft = 'ArrowLeft'
+  const kdown = 'ArrowDown' 
+  const kup = 'ArrowUp'  
+  const kright = 'ArrowRight' 
+  const kleft = 'ArrowLeft' 
+  const kw = 'w'
+  const ks = 's'
+  const kd = 'd'
+  const ka = 'a'
 //event listener, main moving mechanics
-  document.addEventListener('keydown',drawInProgress)
+  // setInterval(()=>{
+    document.addEventListener('keydown',drawInProgress)
+    // if (keysTaken === 2 && counterKeeper <= speed){
+    //   keysTaken = 0
+    //   document.removeEventListener('keydown',drawInProgress)
+    // }
+  // },10)
+  // let timeSinceLastKey = 0
+  // let keysTaken = 0
   function drawInProgress(event){
-    if(event.key === kdown || event.key === kup || event.key === kright || event.key === kleft){
+    if(event.key === kdown || event.key === kup || event.key === kright || event.key === kleft || event.key === ks || event.key === kw || event.key === kd || event.key === ka){
       event.preventDefault()  
-      if (event.key === kdown && currentKeyHold !== kup && currentKeyHold !== kdown){
-        currentKeyHold = event.key                        //stop printing multiple interval 
-        moving(currentKeyHold)
-      } else if (event.key === kup && currentKeyHold !== kdown && currentKeyHold !== kup){               
-        currentKeyHold = event.key                        //repeat
-        moving(currentKeyHold)
-      } else if (event.key === kright && currentKeyHold !== kleft && currentKeyHold !== kright){             
-        currentKeyHold = event.key                        // ^ prevent continious new loop each time key press and going opposite way 
-        moving(currentKeyHold)
-      } else if (event.key === kleft && currentKeyHold !== kright && currentKeyHold !== kleft){
-        currentKeyHold = event.key
-        moving(currentKeyHold)
-      }
+      // if (keysTaken === 0){
+      //   keysTaken = 1
+        if ((event.key === kdown && currentKeyHold !== kup && currentKeyHold !== kdown) || 
+        ((event.key === ks && currentKeyHold !== kw && currentKeyHold !== ks) || 
+
+        (event.key === kup && currentKeyHold !== kdown && currentKeyHold !== kup) || 
+        (event.key === kw && currentKeyHold !== ks && currentKeyHold !== kw) || 
+
+        (event.key === kright && currentKeyHold !== kleft && currentKeyHold !== kright) || 
+        (event.key === kd && currentKeyHold !== ka && currentKeyHold !== kd) || 
+
+        (event.key === kleft && currentKeyHold !== kright && currentKeyHold !== kleft && currentKeyHold !== undefined)) ||
+        (event.key === ka && currentKeyHold !== kd && currentKeyHold !== ka && currentKeyHold !== undefined)){
+          // console.log(nextKeyHold)
+          // moving(nextKeyHold)
+          currentKeyHold = event.key                        //stop printing multiple interval 
+          moving(currentKeyHold)                            // ^ prevent continious new loop each time key press and going opposite way
+        }
+        // if (keysTaken === 1 && currentKeyHold !== nextKeyHold){
+        //   keysTaken = 2
+        //   nextKeyHold = event.key
+        //   console.log(nextKeyHold)
+        // }
+      // } 
     }
-  }
+  } 
+  
 
 
 //remember to shorten the print food code ------ done
@@ -175,6 +211,8 @@ function gameOver(){
 //bug, bumping wall, delay, eat itself ----- somewhat completed ? 
 // make it so that it only take 1 key input per seconds or sth like that
 // but then u'll need buffer key  
+
+// key input fixing 
 
 
 //draw here 
