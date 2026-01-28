@@ -6,15 +6,33 @@
     <title>Snake game in the making</title>
 </head>
 <style>
+  body{
+    display: flex;
+    justify-content: center;
+  }
   #game {
-    display:block;
+    display:inline-block;
     background-color: beige;
-    border-radius: 16px;
-    margin:100px auto;
+    width:900px;
+    border-radius: 16px 0 0 16px ;
+  }
+  #game_controls{
+    display: inline-block;
+    height:900px;
+    width:300px;
+    background-color: beige;
+    border-radius: 0 16px 16px 0;
   }
 </style>
 <body>
-    <canvas id="game" width="1200" height="800"></canvas>
+    <canvas id="game" width="900" height="900">
+    </canvas><div id="game_controls">
+      <p>Score: <span id="current_point">0</span></p>
+      <button type="button" onclick="changeSpeed(12)">Slow</button>
+      <button type="button" onclick="changeSpeed(9)">Medium</button>
+      <button type="button" onclick="changeSpeed(7)">Fast</button>
+      <p id="speed_changed"></p>
+    </div>
 </body>
 <script>
   const canvas = document.getElementById("game");
@@ -22,28 +40,36 @@
   let blockL = 50;
 // color of main table
   function reDrawGrid(){
-    ctx.clearRect(200,0,800,800);
+    drawBorder()
+    ctx.clearRect(50,50,800,800);
     ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
-    ctx.fillRect(200,0,800,800);
+    ctx.fillRect(50,50,800,800);
 // make grid system and make everything based on it 
-    for (let i = 200; i < canvas.width-200; i += blockL){
-        for (let j = 0; j < canvas.height; j += blockL){
-        // ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
-        ctx.strokeRect(i,j,blockL,blockL);
-        // ctx.fillText(`(${i},${j})`,i,j);
+    for (let i = 50; i <= 800; i += blockL){
+        for (let j = 50; j <= 800; j += blockL){
+          ctx.strokeStyle = 'rgb( 0 0 0 / 50% )';
+          // ctx.strokeStyle = 'rgb( 255 255 255 / 70% )';
+          ctx.strokeRect(i,j,blockL,blockL);
+          // ctx.fillText(`(${i},${j})`,i,j);
         }
     }
   }
 
+//
+  function drawBorder(){
+    ctx.fillStyle = 'rgb(55 55 55)'
+    ctx.fillRect(0,0,900,900)
+  }
+
 // x coor convert
   function xCoorConversion(inputXCoor){
-    outputXCoor = inputXCoor * blockL + 200
+    outputXCoor = inputXCoor * blockL + 50
     return outputXCoor
   }
 // y coor convert
   function yCoorConversion(inputYCoor){
     
-    outputYCoor = inputYCoor * blockL
+    outputYCoor = inputYCoor * blockL +50
     return outputYCoor
   }
   
@@ -57,8 +83,12 @@
       yCoor = snakeCoor[i][1]
       // console.log(xCoor,yCoor)
       // console.log(xCoorConversion(xCoor),yCoorConversion(yCoor))
-      ctx.fillStyle = "rgb(194 143 120 )"
-      ctx.fillRect(xCoorConversion(xCoor),yCoorConversion(yCoor),blockL,blockL)
+      ctx.fillStyle = "rgb(113 188 32)"
+      ctx.fillRect(
+        xCoorConversion(xCoor)+(snakeCoor.length-i)/2 +1,
+        yCoorConversion(yCoor)+(snakeCoor.length-i)/2 +1,
+        blockL-(snakeCoor.length-i)-2,
+        blockL-(snakeCoor.length-i)-2)
     }
   }
   // console.log(snakeCoor[0])
@@ -69,8 +99,8 @@
 let foodLocationX = 10
 let foodLocationY = 8
 function drawFood(){
-  ctx.fillStyle = "rgb(113 188 32)"
-  ctx.fillRect(xCoorConversion(foodLocationX),yCoorConversion(foodLocationY),blockL,blockL)
+  ctx.fillStyle = "rgb(169 55 61)"
+  ctx.fillRect(xCoorConversion(foodLocationX)+1,yCoorConversion(foodLocationY)+1,blockL-2,blockL-2)
 }
 // and game over function to keep everything short, there is 2 condition anyway 
 function gameOver(){
@@ -78,14 +108,14 @@ function gameOver(){
   clearInterval(intervalId)
 //make game-over screen        
   ctx.fillStyle='rgb(0 0 0/50%)'
-  ctx.fillRect(0,0,1200,800)
+  ctx.fillRect(0,0,900,900)
 }
                                                                                                           //
 // moving
   let intervalId;
   let currentKeyHold;
   // let nextKeyHold
-  let speed = 12                                // affect speed between 10 -> 15
+  let speed = 12                               // affect speed between 10 -> 15
 
   let counterKeeper = 0 //keep counter
 //shortening by moving function
@@ -130,9 +160,10 @@ function gameOver(){
           foodLocationY = Math.floor(Math.random()*16)
           //add if so that food can't spawn on snake
           for (let i = 0; i< snakeCoor.length; i++){
-            if (foodLocationX === snakeCoor[i][0] && foodLocationY === snakeCoor[i][1])
-            foodLocationX = Math.floor(Math.random()*16)
-            foodLocationY = Math.floor(Math.random()*16)
+            if (foodLocationX === snakeCoor[i][0] && foodLocationY === snakeCoor[i][1]){ 
+              foodLocationX = Math.floor(Math.random()*16)
+              foodLocationY = Math.floor(Math.random()*16)
+            }
           }
         }
 
@@ -147,9 +178,12 @@ function gameOver(){
           gameOver()
         }
 
+//show score
+        changeOutputScore();
+
 // counter
         counterKeeper = 0     
-        console.log(snakeCoor.length - 3)       
+        // console.log(snakeCoor.length - 3)       
       }
     },10)
   }
@@ -212,12 +246,28 @@ function gameOver(){
 // make it so that it only take 1 key input per seconds or sth like that
 // but then u'll need buffer key  
 
-// key input fixing 
+// key input fixing ----- might be done 
+
+// add score counter and speed change 
+function changeOutputScore(){
+  let outputScore = document.getElementById('current_point')
+  outputScore.innerHTML = snakeCoor.length-3
+}
+
+function changeSpeed(inputSpeed){
+  if(currentKeyHold === undefined){
+    speed = inputSpeed
+    let hasChangeSpeed = document.getElementById("speed_changed")
+    hasChangeSpeed.innerHTML = "Speed changed successfully"
+  }
+}
+//make restart button, fix the side panel
 
 
 //draw here 
   reDrawGrid()
   drawSnake()
   drawFood()
+
 </script>
 </html>
