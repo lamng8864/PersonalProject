@@ -147,15 +147,32 @@ h3 {
     display: flex;
     justify-content: center;
 }
-#game {
+/* #game {
     background-color: beige;
     border-radius: 16px;
-    
+
     border-left:1px solid rgba(0, 0, 0, 0.25);
     border-right:1px solid rgba(0, 0, 0, 0.25);
     border-bottom:1px solid rgba(0, 0, 0, 0.25);
     border-top: 1px solid rgba(0, 0, 0, 0.25);
-}
+
+    display:inline-block;
+    background-color: beige;
+    width:900px;
+    height:900px;
+    border-radius: 16px 0 0 16px ;
+    }
+#side_panel{
+    display: inline-block;
+    height:900px;
+    width:300px;
+    background-color: beige;
+    border-radius: 0 16px 16px 0;
+    }
+#game_controls{
+    margin:auto;
+    padding:16px;
+    } */
 
 
 .block3>.title_container{
