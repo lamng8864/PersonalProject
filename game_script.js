@@ -6,6 +6,10 @@
     drawBorder()
     ctx.clearRect(50,50,800,800);
     ctx.fillStyle = 'rgb( 0 0 0 / 50% )';
+    // let color1 = Math.floor(Math.random()*255)
+    // let color2 = Math.floor(Math.random()*255)
+    // let color3 = Math.floor(Math.random()*255)
+    // ctx.fillStyle = `rgb(${color1} ${color2} ${color3})`
     ctx.fillRect(50,50,800,800);
 // make grid system and make everything based on it 
     for (let i = 50; i <= 800; i += blockL){
@@ -46,7 +50,13 @@
       yCoor = snakeCoor[i][1]
       // console.log(xCoor,yCoor)
       // console.log(xCoorConversion(xCoor),yCoorConversion(yCoor))
+      
       ctx.fillStyle = "rgb(113 188 32)"
+//for fun 
+    //   let color1 = Math.floor(Math.random()*255)
+    //   let color2 = Math.floor(Math.random()*255)
+    //   let color3 = Math.floor(Math.random()*255)
+    //   ctx.fillStyle = `rgb(${color1} ${color2} ${color3})`
       ctx.fillRect(
         xCoorConversion(xCoor)+(snakeCoor.length-i)/2 +1,
         yCoorConversion(yCoor)+(snakeCoor.length-i)/2 +1,
@@ -61,10 +71,14 @@
 //next is scoring
 let foodLocationX = 10
 let foodLocationY = 8
+let foodAmount = 1
 function drawFood(){
   ctx.fillStyle = "rgb(169 55 61)"
   ctx.fillRect(xCoorConversion(foodLocationX)+1,yCoorConversion(foodLocationY)+1,blockL-2,blockL-2)
 }
+//add more than 1 food ? 
+
+
 // and game over function to keep everything short, there is 2 condition anyway 
 function gameOver(){
   document.removeEventListener('keydown',drawInProgress)
@@ -277,7 +291,7 @@ function drawStartScreen(){
   ctx.roundRect(530,710,200,80,8)//fast
   ctx.fill();
   ctx.beginPath()
-  ctx.fillStyle='rgb(201 230 253/ 80% )'
+  ctx.fillStyle='rgb(245 245 223/ 80% )'
   ctx.roundRect(510,410,220,80,8)//default
   ctx.fill();
 
@@ -315,15 +329,15 @@ function drawStartScreen(){
   document.addEventListener('click',(event)=>{
     if(event.offsetX > 530 && event.offsetX < 730 &&
      event.offsetY > 260 && event.offsetY < 340){
-        changeSpeed(14)
+        changeSpeed(17)
     }
     if(event.offsetX > 510 && event.offsetX < 730 &&
      event.offsetY > 410 && event.offsetY < 490){
-        changeSpeed(12)
+        changeSpeed(14)
     }
     if(event.offsetX > 510 && event.offsetX < 730 &&
      event.offsetY > 560 && event.offsetY < 640){
-        changeSpeed(10)
+        changeSpeed(11)
     }
     if(event.offsetX > 530 && event.offsetX < 730 &&
      event.offsetY > 710 && event.offsetY < 790){
@@ -332,6 +346,8 @@ function drawStartScreen(){
   })
 }
 //make pause button
+//make dice that determine the amount of food 
+//make obstacle or maps 
 
 //draw here 
   reDrawGrid()
